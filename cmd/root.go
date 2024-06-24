@@ -7,7 +7,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "todo-list",
+	Use:   "todo",
 	Short: "A small application for tracking your tasks.",
 	Long:  ``,
 	// Run:   func(cmd *cobra.Command, args []string) {},
