@@ -1,6 +1,3 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -8,54 +5,72 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
+	"github.com/aquasecurity/table"
 	"github.com/hikkiyomi/todo/internal/task"
-	"github.com/hikkiyomi/todo/internal/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-// listCmd represents the list command
+func getAllTasks() []task.Task {
+	directoryPath := viper.Get("tasks.path").(string)
+	entries, err := os.ReadDir(directoryPath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tasks := make([]task.Task, 0, cap(entries))
+
+	for _, entry := range entries {
+		if strings.HasSuffix(entry.Name(), ".json") {
+			path := fmt.Sprintf("%v%v", directoryPath, entry.Name())
+			bytes, err := os.ReadFile(path)
+
+			if err != nil {
+				log.Fatal("Could not read file located at " + path)
+			}
+
+			var task task.Task
+
+			err = json.Unmarshal(bytes, &task)
+
+			if err != nil {
+				log.Fatal("Could not deserialize json into task.")
+			}
+
+			tasks = append(tasks, task)
+		}
+	}
+
+	return tasks
+}
+
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Shows all your pending tasks.",
 	Run: func(cmd *cobra.Command, args []string) {
-		tasksPath := viper.Get("tasks.path").(string)
-		entries, err := os.ReadDir(tasksPath)
+		tasks := getAllTasks()
+		table := table.New(os.Stdout)
 
-		if err != nil {
-			log.Fatal(err)
-		}
+		table.SetHeaders("ID", "Name", "Content", "Until")
 
-		tasks := make([]task.Task, 0)
+		for i, task := range tasks {
+			var untilString string
 
-		for _, entry := range entries {
-			if strings.HasSuffix(entry.Name(), ".json") {
-				path := fmt.Sprintf("%v%v", tasksPath, entry.Name())
-				bytes, err := os.ReadFile(path)
-
-				if err != nil {
-					log.Fatal("Could not read file located at " + path)
-				}
-
-				var task task.Task
-
-				err = json.Unmarshal(bytes, &task)
-
-				if err != nil {
-					log.Fatal("Could not deserialize json into task.")
-				}
-
-				tasks = append(tasks, task)
+			if task.Until == nil {
+				untilString = ""
+			} else {
+				untilString = task.Until.String()
 			}
+
+			table.AddRow(strconv.Itoa(i+1), task.Name, task.Content, untilString)
 		}
 
-		result := strings.Join(util.Map(tasks, func(task task.Task) string {
-			return task.String()
-		}), "\n=========================\n")
-
-		fmt.Println(result)
+		table.Render()
+		fmt.Println("Use `todo info <taskId>` to get more info about task.")
 	},
 }
 

@@ -14,7 +14,6 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "todo",
 	Short: "A small application for tracking your tasks.",
-	// Run:   func(cmd *cobra.Command, args []string) {},
 }
 
 func Execute() {
@@ -44,7 +43,7 @@ func initConfig() {
 
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err == nil {
-		log.Printf("Using config file: %s\n\n", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("Cannot open provided config " + viper.ConfigFileUsed())
 	}
 }
