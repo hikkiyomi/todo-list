@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/hikkiyomi/todo/internal/task"
+	"github.com/hikkiyomi/todo/internal/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -50,11 +51,9 @@ var listCmd = &cobra.Command{
 			}
 		}
 
-		result := "=========================\n"
-
-		for _, task := range tasks {
-			result += task.String() + "\n=========================\n"
-		}
+		result := strings.Join(util.Map(tasks, func(task task.Task) string {
+			return task.String()
+		}), "\n=========================\n")
 
 		fmt.Println(result)
 	},

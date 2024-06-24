@@ -17,6 +17,8 @@ func (task *Task) String() (result string) {
 
 	if task.Until != nil {
 		result += fmt.Sprintf("UNTIL: %s", task.Until)
+	} else {
+		result += "UNTIL: No deadline"
 	}
 
 	return
