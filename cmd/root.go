@@ -13,7 +13,6 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "todo",
 	Short: "A small application for tracking your tasks.",
-	Long:  ``,
 	// Run:   func(cmd *cobra.Command, args []string) {},
 }
 

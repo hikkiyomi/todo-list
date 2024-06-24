@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -14,7 +16,6 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Adds your tasks to todo list",
-	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		name, _ := cmd.Flags().GetString("name")
 		content, _ := cmd.Flags().GetString("content")
@@ -27,20 +28,16 @@ var addCmd = &cobra.Command{
 			task.Until = &untilTime
 		}
 
-		// taskJson, err := json.Marshal(task)
+		taskJson, err := json.Marshal(task)
 
 		if err != nil {
-			fmt.Println("Could not serialize your task into json.")
-
-			return
+			log.Fatal("Could not serialize your task into json.")
 		}
 
-		todoPath := viper.Get("todo.path")
-		resultPath := fmt.Sprintf("%v%v.json", todoPath, name)
+		tasksPath := viper.Get("tasks.path")
+		resultPath := fmt.Sprintf("%v%v.json", tasksPath, name)
 
-		fmt.Fprintln(os.Stderr, "Result path is: ", resultPath)
-
-		// os.WriteFile(resultPath, taskJson, 0644)
+		os.WriteFile(resultPath, taskJson, 0644)
 	},
 }
 
