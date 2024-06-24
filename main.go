@@ -1,6 +1,8 @@
 package main
 
-import "github.com/hikkiyomi/todo-list/cmd"
+import (
+	"github.com/hikkiyomi/todo-list/cmd"
+)
 
 func main() {
 	cmd.Execute()
