@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
-	"github.com/hikkiyomi/todo-list/internal/task"
+	"github.com/hikkiyomi/todo/internal/task"
 )
 
 var addCmd = &cobra.Command{
@@ -27,7 +27,7 @@ var addCmd = &cobra.Command{
 			task.Until = &untilTime
 		}
 
-		taskJson, err := json.Marshal(task)
+		// taskJson, err := json.Marshal(task)
 
 		if err != nil {
 			fmt.Println("Could not serialize your task into json.")
@@ -35,7 +35,12 @@ var addCmd = &cobra.Command{
 			return
 		}
 
-		os.WriteFile(fmt.Sprintf("~/todos/%v.json", name), taskJson, 0644)
+		todoPath := viper.Get("todo.path")
+		resultPath := fmt.Sprintf("%v%v.json", todoPath, name)
+
+		fmt.Fprintln(os.Stderr, "Result path is: ", resultPath)
+
+		// os.WriteFile(resultPath, taskJson, 0644)
 	},
 }
 

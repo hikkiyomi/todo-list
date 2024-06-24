@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/hikkiyomi/todo-list/cmd"
+	"github.com/hikkiyomi/todo/cmd"
 )
 
 func main() {
