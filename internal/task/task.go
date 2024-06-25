@@ -1,7 +1,9 @@
 package task
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -18,15 +20,34 @@ type Task struct {
 
 func (task *Task) String() (result string) {
 	result += fmt.Sprintf("SHORT DESCRIPTION: %s\n\n", task.Short)
-	result += fmt.Sprintf(" LONG DESCRIPTION:\n%s\n\n", task.Long)
+
+	if task.Long != "" {
+		result += fmt.Sprintf("LONG DESCRIPTION:\n%s\n\n", task.Long)
+	} else {
+		result += "LONG DESCRIPTION: No long description.\n\n"
+	}
 
 	if task.Until != nil {
-		result += fmt.Sprintf("            UNTIL: %s", task.Until)
+		result += fmt.Sprintf("UNTIL: %s", task.Until)
 	} else {
-		result += "            UNTIL: No deadline"
+		result += "UNTIL: No deadline"
 	}
 
 	return
+}
+
+func (task *Task) Read(path string) {
+	bytes, err := os.ReadFile(path)
+
+	if err != nil {
+		log.Fatal("Could not read file located at " + path)
+	}
+
+	err = json.Unmarshal(bytes, task)
+
+	if err != nil {
+		log.Fatal("Could not deserialize json into task.")
+	}
 }
 
 func (task *Task) Parse(flags *pflag.FlagSet) {

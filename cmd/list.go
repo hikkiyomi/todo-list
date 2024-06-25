@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -26,21 +25,10 @@ func getAllTasks() []task.Task {
 
 	for _, entry := range entries {
 		if strings.HasSuffix(entry.Name(), ".json") {
-			path := fmt.Sprintf("%v%v", directoryPath, entry.Name())
-			bytes, err := os.ReadFile(path)
-
-			if err != nil {
-				log.Fatal("Could not read file located at " + path)
-			}
-
 			var task task.Task
+			path := fmt.Sprintf("%v%v", directoryPath, entry.Name())
 
-			err = json.Unmarshal(bytes, &task)
-
-			if err != nil {
-				log.Fatal("Could not deserialize json into task.")
-			}
-
+			task.Read(path)
 			tasks = append(tasks, task)
 		}
 	}
