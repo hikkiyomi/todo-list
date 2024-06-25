@@ -56,10 +56,11 @@ func (task *Task) Parse(flags *pflag.FlagSet) {
 	task.Short, task.Long = short, long
 
 	untilString, _ := flags.GetString("until")
-	untilTime, err := time.Parse("2006-01-02 15:04", untilString)
+	untilTimeUtc, err := time.Parse("2006-01-02 15:04", untilString)
+	untilTimeLocal := untilTimeUtc.In(getCurrentLocation()).Add(time.Second * time.Duration(-getZoneOffset()))
 
 	if err == nil {
-		task.Until = &untilTime
+		task.Until = &untilTimeLocal
 	}
 }
 
@@ -75,4 +76,14 @@ func getLastAvailableId(directoryPath string) int {
 			return i
 		}
 	}
+}
+
+func getZoneOffset() int {
+	_, offset := time.Now().Zone()
+
+	return offset
+}
+
+func getCurrentLocation() *time.Location {
+	return time.Now().Location()
 }
