@@ -30,10 +30,9 @@ var addCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(addCmd)
 
-	addCmd.Flags().String("name", "", "defines the name of the task")
-	addCmd.Flags().String("content", "", "defines the content of the task")
+	addCmd.Flags().String("short", "", "defines the short description of the task")
+	addCmd.Flags().String("long", "", "defines the long description of the task")
 	addCmd.Flags().String("until", "", "defines the deadline of the task")
 
-	addCmd.MarkFlagRequired("name")
-	addCmd.MarkFlagRequired("content")
+	addCmd.MarkFlagRequired("short")
 }

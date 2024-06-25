@@ -53,9 +53,15 @@ var listCmd = &cobra.Command{
 	Short: "Shows all your pending tasks.",
 	Run: func(cmd *cobra.Command, args []string) {
 		tasks := getAllTasks()
-		table := table.New(os.Stdout)
 
-		table.SetHeaders("ID", "Name", "Content", "Until")
+		if len(tasks) == 0 {
+			fmt.Println("No pending tasks.")
+
+			return
+		}
+
+		table := table.New(os.Stdout)
+		table.SetHeaders("ID", "Short", "Until")
 
 		for i, task := range tasks {
 			var untilString string
@@ -66,7 +72,7 @@ var listCmd = &cobra.Command{
 				untilString = task.Until.String()
 			}
 
-			table.AddRow(strconv.Itoa(i+1), task.Name, task.Content, untilString)
+			table.AddRow(strconv.Itoa(i+1), task.Short, untilString)
 		}
 
 		table.Render()
