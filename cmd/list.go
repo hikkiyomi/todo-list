@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/aquasecurity/table"
 	"github.com/hikkiyomi/todo/internal/task"
+	"github.com/hikkiyomi/todo/internal/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -24,7 +24,7 @@ func getAllTasks() []task.Task {
 	tasks := make([]task.Task, 0, cap(entries))
 
 	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".json") {
+		if util.ValidateEntry(entry) {
 			var task task.Task
 			path := fmt.Sprintf("%v%v", directoryPath, entry.Name())
 

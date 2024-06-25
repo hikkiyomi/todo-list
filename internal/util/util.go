@@ -68,3 +68,15 @@ func Reorganize(directoryPath string) {
 		expectedId++
 	}
 }
+
+func ValidateEntry(entry fs.DirEntry) bool {
+	if !strings.HasSuffix(entry.Name(), ".json") {
+		return false
+	}
+
+	var id int
+
+	_, err := fmt.Sscanf(entry.Name(), "%d.json", &id)
+
+	return err == nil
+}
